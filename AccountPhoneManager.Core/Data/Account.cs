@@ -7,6 +7,6 @@ namespace AccountPhoneManager.Core.Data
         public Guid AccountId { get; set; }
         public string? Name { get; set; }
         public AccountStatus Status { get; set; } = AccountStatus.Active;
-        public Guid PhoneNumberId { get; set; }
+        public IEnumerable<Guid> PhoneNumberId { get; set; } = [];
     }
 }
