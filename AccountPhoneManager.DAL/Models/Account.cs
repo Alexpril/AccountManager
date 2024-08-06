@@ -2,10 +2,24 @@
 {
     public class Account
     {
+        /// <summary>
+        /// Account id
+        /// </summary>
         public Guid Id { get; set; } = Guid.NewGuid();
+
+        /// <summary>
+        /// Account name
+        /// </summary>
         public string? Name { get; set; }
+
+        /// <summary>
+        /// Account status
+        /// </summary>
         public string? Status { get; set; } = "Active";
-        public IList<Guid> PhoneNumberIds { get; set; } = [];
-        public virtual IList<Phone> Phone { get; set; } = [];
+
+        /// <summary>
+        /// Assigned numbers
+        /// </summary>
+        public virtual IList<Phone> PhoneNumbers { get; set; } = new List<Phone>();
     }
 }

@@ -1,10 +1,5 @@
 ﻿using AccountPhoneManager.DAL.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AccountPhoneManager.DAL.Contexts
 {
@@ -16,13 +11,14 @@ namespace AccountPhoneManager.DAL.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Additional model configurations can go here
-            modelBuilder.Entity<Account>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Name).IsRequired();
-                entity.Property(e => e.Status).HasDefaultValue("Active");
-            });
+            modelBuilder.Entity<Account>()
+                .HasMany(a => a.PhoneNumbers)
+                .WithOne(p => p.Account)
+                .HasForeignKey(p => p.AccountId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            modelBuilder.Entity<Phone>()
+                .Property(p => p.Number).HasMaxLength(11);
         }
     }
 }

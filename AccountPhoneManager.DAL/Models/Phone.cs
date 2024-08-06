@@ -1,15 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AccountPhoneManager.DAL.Models
+﻿namespace AccountPhoneManager.DAL.Models
 {
     public class Phone
     {
-        public Guid Id { get; set; }
+        /// <summary>
+        /// Phone Id
+        /// </summary>
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+        /// <summary>
+        /// Phone Number
+        /// </summary>
         public string? Number { get; set; }
-        public bool IsDeleted { get; set; } = true;
+
+        /// <summary>
+        /// Foreign key for account
+        /// </summary>
+        public Guid? AccountId { get; set; }
+
+        /// <summary>
+        /// Assigned account
+        /// </summary>
+        public virtual Account? Account { get; set; }
     }
 }

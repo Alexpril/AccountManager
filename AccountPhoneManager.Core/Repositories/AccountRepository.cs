@@ -1,32 +1,62 @@
-﻿using AccountPhoneManager.Core.Data;
+﻿using AccountPhoneManager.Core.Abstraction;
+using AccountPhoneManager.Core.Data;
 using AccountPhoneManager.Core.Enums;
 using AccountPhoneManager.DAL.Contexts;
 using AccountPhoneManager.DAL.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Account = AccountPhoneManager.DAL.Models.Account;
 
 namespace AccountPhoneManager.Core.Repositories
 {
-    public class AccountRepository(AccountManagerDbContexts dbContext)
+    public class AccountRepository(AccountManagerDbContexts dbContext) : IAccountRepository
     {
-        private readonly AccountManagerDbContexts _dbContext = dbContext;
+        private readonly AccountManagerDbContexts _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
-        public void CreateAccount(string name)
+        /// <summary>
+        /// Creates account
+        /// </summary>
+        /// <param name="name"></param>
+        public void InsertAccount(string name)
         {
-            _dbContext.Accounts.Add(new() { Name = name });
+            var account = new Account
+            {
+                Name = name,
+                Status = AccountStatus.Active.ToString()
+            };
+
+            _dbContext.Accounts.Add(account);
             _dbContext.SaveChanges();
         }
 
-        public void UpdateAccountStatus(Guid accountId, UpdateAccountRequest request)
+        /// <summary>
+        /// Gets all assigned numbers
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
+        public IEnumerable<Phone> GetPhoneNumbersByAccountId(Guid accountId)
         {
-            var account = _dbContext.Accounts.FirstOrDefault(a => a.Id == accountId);
+            var account = _dbContext.Accounts
+                .Include(a => a.PhoneNumbers)
+                .FirstOrDefault(a => a.Id == accountId);
+
+            return account?.PhoneNumbers ?? Enumerable.Empty<Phone>();
+        }
+
+        /// <summary>
+        /// Updates account status or assigned numbers
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <param name="request"></param>
+        /// <exception cref="Exception"></exception>
+        public void UpdateAccount(Guid accountId, UpdateAccountRequest request)
+        {
+            var account = _dbContext.Accounts
+                .Include(a => a.PhoneNumbers)
+                .FirstOrDefault(a => a.Id == accountId);
+
             if (account == null)
             {
-                throw new Exception();
+                throw new Exception("Account not found.");
             }
 
             if (account.Status == AccountStatus.Suspended.ToString() && request.PhoneNumberId.HasValue)
@@ -41,16 +71,29 @@ namespace AccountPhoneManager.Core.Repositories
 
             if (request.PhoneNumberId.HasValue)
             {
-                // Check if the phone number is already assigned to another account
-                if (_dbContext.Accounts.Any(a => a.Id != accountId && a.PhoneNumberIds.Contains(request.PhoneNumberId.Value)))
+                var phoneNumberId = request.PhoneNumberId.Value;
+
+                // Check if the phone number is already assigned to another active account
+                var isPhoneNumberAssigned = _dbContext.Accounts
+                    .Any(a => a.Id != accountId && a.PhoneNumbers.Any(p => p.Id == phoneNumberId && a.Status == AccountStatus.Active.ToString()));
+
+                if (isPhoneNumberAssigned)
                 {
                     throw new Exception("Phone number is already assigned to another account.");
                 }
 
                 // Add the phone number to the existing list
-                if (!account.PhoneNumberIds.Contains(request.PhoneNumberId.Value))
+                if (!account.PhoneNumbers.Any(p => p.Id == phoneNumberId))
                 {
-                    account.PhoneNumberIds.Add(request.PhoneNumberId.Value);
+                    var phoneNumber = _dbContext.PhoneNumbers.FirstOrDefault(p => p.Id == phoneNumberId);
+                    if (phoneNumber != null)
+                    {
+                        account.PhoneNumbers.Add(phoneNumber);
+                    }
+                    else
+                    {
+                        throw new Exception("Phone number not found.");
+                    }
                 }
             }
 

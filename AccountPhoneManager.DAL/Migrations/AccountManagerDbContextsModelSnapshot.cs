@@ -29,17 +29,10 @@ namespace AccountPhoneManager.DAL.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumberIds")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("Active");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -55,9 +48,6 @@ namespace AccountPhoneManager.DAL.Migrations
                     b.Property<Guid?>("AccountId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Number")
                         .HasColumnType("nvarchar(max)");
 
@@ -70,14 +60,16 @@ namespace AccountPhoneManager.DAL.Migrations
 
             modelBuilder.Entity("AccountPhoneManager.DAL.Models.Phone", b =>
                 {
-                    b.HasOne("AccountPhoneManager.DAL.Models.Account", null)
-                        .WithMany("Phone")
+                    b.HasOne("AccountPhoneManager.DAL.Models.Account", "Account")
+                        .WithMany("PhoneNumbers")
                         .HasForeignKey("AccountId");
+
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("AccountPhoneManager.DAL.Models.Account", b =>
                 {
-                    b.Navigation("Phone");
+                    b.Navigation("PhoneNumbers");
                 });
 #pragma warning restore 612, 618
         }
