@@ -14,9 +14,15 @@ namespace AccountPhoneManager.DAL.Contexts
 
         public DbSet<Phone> PhoneNumbers { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=your_server;Database=your_database;User Id=your_username;Password=your_password;");
+            // Additional model configurations can go here
+            modelBuilder.Entity<Account>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired();
+                entity.Property(e => e.Status).HasDefaultValue("Active");
+            });
         }
     }
 }

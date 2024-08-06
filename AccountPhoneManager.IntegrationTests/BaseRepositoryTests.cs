@@ -4,7 +4,8 @@ using AutoFixture;
 
 namespace AccountPhoneManager.IntegrationTests
 {
-    public abstract class BaseRepositoryTests : ICollectionFixture<SQLServerTestFixture>
+    [Collection("Repository Tests")]
+    public abstract class BaseRepositoryTests
     {
         private readonly SQLServerTestFixture _databaseFixture;
 

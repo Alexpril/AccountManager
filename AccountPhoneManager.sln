@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountPhoneManager.API", "AccountPhoneManager.API\AccountPhoneManager.API.csproj", "{5B547739-01B0-406A-855C-B3A660618631}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0992B7F0-33B0-44AD-A570-D5E3F3870EE3} = {0992B7F0-33B0-44AD-A570-D5E3F3870EE3}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountPhoneManager.UnitTests", "AccountPhoneManagerTests\AccountPhoneManager.UnitTests.csproj", "{418A46C5-B328-4AF7-A22A-422C5C3EC44E}"
 EndProject
@@ -11,7 +14,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountPhoneManager.Core", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountPhoneManager.DAL", "AccountPhoneManager.DAL\AccountPhoneManager.DAL.csproj", "{2A41BB57-4209-4C3B-B9B9-E0C7C5FC021F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountPhoneManager.IntegrationTests", "AccountPhoneManager.IntegrationTests\AccountPhoneManager.IntegrationTests.csproj", "{768AA665-80BF-47DE-BD3E-5F4D1EDF5B2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountPhoneManager.IntegrationTests", "AccountPhoneManager.IntegrationTests\AccountPhoneManager.IntegrationTests.csproj", "{768AA665-80BF-47DE-BD3E-5F4D1EDF5B2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -9,7 +9,7 @@ namespace AccountPhoneManager.DAL.Models
     public class Phone
     {
         public Guid Id { get; set; }
-        public string Number { get; set; }
+        public string? Number { get; set; }
         public bool IsDeleted { get; set; } = true;
     }
 }
