@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AccountPhoneManager.Core.Abstraction
+﻿namespace AccountPhoneManager.Core.Abstraction
 {
-    internal interface IPhoneManagmentService
+    public interface IPhoneManagmentService
     {
+        /// <summary>
+        /// Used to create phone numbers
+        /// </summary>
+        /// <param name="phoneNumber"></param>
+        public void CreatePhoneNumber(string phoneNumber);
+
+        /// <summary>
+        /// Used to delete phone numbers
+        /// </summary>
+        /// <param name="phoneId"></param>
+        public void DeletePhoneNumber(Guid phoneId);
     }
 }

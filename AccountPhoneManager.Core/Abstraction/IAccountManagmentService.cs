@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AccountPhoneManager.Core.Data;
+using AccountPhoneManager.Core.Enums;
+using AccountPhoneManager.DAL.Models;
 
 namespace AccountPhoneManager.Core.Abstraction
 {
-    internal interface IAccountManagmentService
+    public interface IAccountManagmentService
     {
+        public void CreateAccount(string name);
+        public IEnumerable<Phone> GetPhoneNumbersByAccountId(Guid accountId);
+        public void UpdateAccountStatus(Guid accountId, AccountStatus status);
+        public void UpdateAccountNumber(Guid accountId, Guid phoneId);
     }
 }
