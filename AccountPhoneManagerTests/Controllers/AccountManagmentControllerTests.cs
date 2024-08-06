@@ -6,131 +6,134 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Moq.AutoMock;
 
-public class AccountControllerTests
+namespace AccountPhoneManager.UnitTests.Controllers
 {
-    private readonly Mock<IAccountManagmentService> _mockService;
-    private readonly AccountManagmentController _controller;
-
-    public AccountControllerTests()
+    public class AccountControllerTests
     {
-        var mocker = new AutoMocker();
-        _mockService = mocker.GetMock<IAccountManagmentService>();
-        _controller = new AccountManagmentController(_mockService.Object);
-    }
+        private readonly Mock<IAccountManagmentService> _mockService;
+        private readonly AccountManagmentController _controller;
 
-    [Theory]
-    [InlineData("Test Account")]
-    public void CreateAccount_Success_ReturnsOk(string name)
-    {
-        // Act
-        var result = _controller.CreateAccount(name) as OkObjectResult;
+        public AccountControllerTests()
+        {
+            var mocker = new AutoMocker();
+            _mockService = mocker.GetMock<IAccountManagmentService>();
+            _controller = new AccountManagmentController(_mockService.Object);
+        }
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(200, result.StatusCode);
-        Assert.Equal("Account created successfully.", result.Value);
-    }
+        [Theory]
+        [InlineData("Test Account")]
+        public void CreateAccount_Success_ReturnsOk(string name)
+        {
+            // Act
+            var result = _controller.CreateAccount(name) as OkObjectResult;
 
-    [Theory]
-    [InlineData("")]
-    public void CreateAccount_InvalidName_ReturnsBadRequest(string name)
-    {
-        // Arrange
-        _mockService.Setup(x => x.CreateAccount(name))
-            .Throws(new ArgumentException("Account name cannot be null or empty.", nameof(name)));
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(200, result.StatusCode);
+            Assert.Equal("Account created successfully.", result.Value);
+        }
 
-        // Act
-        var result = _controller.CreateAccount(name) as BadRequestObjectResult;
+        [Theory]
+        [InlineData("")]
+        public void CreateAccount_InvalidName_ReturnsBadRequest(string name)
+        {
+            // Arrange
+            _mockService.Setup(x => x.CreateAccount(name))
+                .Throws(new ArgumentException("Account name cannot be null or empty.", nameof(name)));
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(400, result.StatusCode);
-        Assert.Equal("Account name cannot be null or empty.", result.Value);
-    }
+            // Act
+            var result = _controller.CreateAccount(name) as BadRequestObjectResult;
 
-    [Fact]
-    public void GetPhoneNumbersByAccountId_Success_ReturnsOk()
-    {
-        // Arrange
-        var accountId = Guid.NewGuid();
-        var phone = new Phone { Id = Guid.NewGuid(), Number = "789456123", AccountId = accountId };
-        var phone2 = new Phone { Id = Guid.NewGuid(), Number = "789456123", AccountId = accountId };
-        _mockService.Setup(x => x.GetPhoneNumbersByAccountId(accountId))
-            .Returns([phone, phone2]);
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(400, result.StatusCode);
+            Assert.Equal("Account name cannot be null or empty. (Parameter 'name')", result.Value);
+        }
 
-        // Act
-        var result = _controller.GetPhoneNumbersByAccountId(accountId) as OkObjectResult;
+        [Fact]
+        public void GetPhoneNumbersByAccountId_Success_ReturnsOk()
+        {
+            // Arrange
+            var accountId = Guid.NewGuid();
+            var phone = new Phone { Id = Guid.NewGuid(), Number = "789456123", AccountId = accountId };
+            var phone2 = new Phone { Id = Guid.NewGuid(), Number = "789456123", AccountId = accountId };
+            _mockService.Setup(x => x.GetPhoneNumbersByAccountId(accountId))
+                .Returns([phone, phone2]);
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(200, result.StatusCode);
-    }
+            // Act
+            var result = _controller.GetPhoneNumbersByAccountId(accountId) as OkObjectResult;
 
-    [Fact]
-    public void GetPhoneNumbersByAccountId_InvalidId_ReturnsBadRequest()
-    {
-        // Arrange
-        var accountId = Guid.NewGuid();
-        _mockService.Setup(x => x.GetPhoneNumbersByAccountId(accountId))
-            .Throws(new ArgumentException("Account ID cannot be empty.", nameof(accountId)));
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(200, result.StatusCode);
+        }
 
-        // Act
-        var result = _controller.GetPhoneNumbersByAccountId(accountId) as BadRequestObjectResult;
+        [Fact]
+        public void GetPhoneNumbersByAccountId_InvalidId_ReturnsBadRequest()
+        {
+            // Arrange
+            var accountId = Guid.NewGuid();
+            _mockService.Setup(x => x.GetPhoneNumbersByAccountId(accountId))
+                .Throws(new ArgumentException("Account ID cannot be empty.", nameof(accountId)));
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(400, result.StatusCode);
-        Assert.Equal("Account ID cannot be empty.", result.Value);
-    }
+            // Act
+            var result = _controller.GetPhoneNumbersByAccountId(accountId) as BadRequestObjectResult;
 
-    [Theory]
-    [InlineData(AccountStatus.Active)]
-    [InlineData(AccountStatus.Suspended)]
-    public void UpdateAccountStatus_Success_ReturnsOk(AccountStatus status)
-    {
-        // Arrange
-        var accountId = Guid.NewGuid();
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(400, result.StatusCode);
+            Assert.Equal("Account ID cannot be empty. (Parameter 'accountId')", result.Value);
+        }
 
-        // Act
-        var result = _controller.UpdateAccount(accountId, status) as OkObjectResult;
+        [Theory]
+        [InlineData(AccountStatus.Active)]
+        [InlineData(AccountStatus.Suspended)]
+        public void UpdateAccountStatus_Success_ReturnsOk(AccountStatus status)
+        {
+            // Arrange
+            var accountId = Guid.NewGuid();
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(200, result.StatusCode);
-        Assert.Equal("Account updated successfully.", result.Value);
-    }
+            // Act
+            var result = _controller.UpdateAccount(accountId, status) as OkObjectResult;
 
-    [Fact]
-    public void UpdateAccountNumber_Success_ReturnsOk()
-    {
-        // Arrange
-        var accountId = Guid.NewGuid();
-        var phoneId = Guid.NewGuid();
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(200, result.StatusCode);
+            Assert.Equal("Account updated successfully.", result.Value);
+        }
 
-        // Act
-        var result = _controller.UpdateAccount(accountId, phoneId) as OkObjectResult;
+        [Fact]
+        public void UpdateAccountNumber_Success_ReturnsOk()
+        {
+            // Arrange
+            var accountId = Guid.NewGuid();
+            var phoneId = Guid.NewGuid();
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(200, result.StatusCode);
-        Assert.Equal("Account updated successfully.", result.Value);
-    }
+            // Act
+            var result = _controller.UpdateAccount(accountId, phoneId) as OkObjectResult;
 
-    [Fact]
-    public void UpdateAccountNumber_InvalidId_ReturnsBadRequest()
-    {
-        // Arrange
-        var accountId = Guid.NewGuid();
-        var phoneId = Guid.NewGuid();
-        _mockService.Setup(x => x.UpdateAccountNumber(accountId, phoneId))
-            .Throws(new ArgumentException("Account ID cannot be empty.", nameof(accountId)));
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(200, result.StatusCode);
+            Assert.Equal("Account updated successfully.", result.Value);
+        }
 
-        // Act
-        var result = _controller.UpdateAccount(accountId, phoneId) as BadRequestObjectResult;
+        [Fact]
+        public void UpdateAccountNumber_InvalidId_ReturnsBadRequest()
+        {
+            // Arrange
+            var accountId = Guid.NewGuid();
+            var phoneId = Guid.NewGuid();
+            _mockService.Setup(x => x.UpdateAccountNumber(accountId, phoneId))
+                .Throws(new ArgumentException("Account ID cannot be empty.", nameof(accountId)));
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(400, result.StatusCode);
-        Assert.Equal("Account ID cannot be empty.", result.Value);
+            // Act
+            var result = _controller.UpdateAccount(accountId, phoneId) as BadRequestObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(400, result.StatusCode);
+            Assert.Equal("Account ID cannot be empty. (Parameter 'accountId')", result.Value);
+        }
     }
 }

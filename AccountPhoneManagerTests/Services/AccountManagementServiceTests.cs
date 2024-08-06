@@ -6,117 +6,120 @@ using Moq.AutoMock;
 using Moq;
 using AccountPhoneManager.Core.Data;
 
-public class AccountManagmentServiceTests
+namespace AccountPhoneManager.UnitTests.Services
 {
-    private readonly AutoMocker _mocker;
-    private readonly AccountManagmentService _service;
-
-    public AccountManagmentServiceTests()
+    public class AccountManagmentServiceTests
     {
-        _mocker = new AutoMocker();
-        _service = _mocker.CreateInstance<AccountManagmentService>();
-    }
+        private readonly AutoMocker _mocker;
+        private readonly AccountManagmentService _service;
 
-    [Fact]
-    public void CreateAccount_Should_ThrowException_When_NameIsNullOrEmpty()
-    {
-        // Arrange
-        string accountName = null;
+        public AccountManagmentServiceTests()
+        {
+            _mocker = new AutoMocker();
+            _service = _mocker.CreateInstance<AccountManagmentService>();
+        }
 
-        // Act & Assert
-        var exception = Assert.Throws<ArgumentException>(() => _service.CreateAccount(accountName));
-        Assert.Equal("Account name cannot be null or empty. (Parameter 'name')", exception.Message);
-    }
+        [Fact]
+        public void CreateAccount_Should_ThrowException_When_NameIsNullOrEmpty()
+        {
+            // Arrange
+            string accountName = null;
 
-    [Fact]
-    public void CreateAccount_Should_CallRepository_When_NameIsValid()
-    {
-        // Arrange
-        var accountName = "Valid Account Name";
+            // Act & Assert
+            var exception = Assert.Throws<ArgumentException>(() => _service.CreateAccount(accountName));
+            Assert.Equal("Account name cannot be null or empty. (Parameter 'name')", exception.Message);
+        }
 
-        // Act
-        _service.CreateAccount(accountName);
+        [Fact]
+        public void CreateAccount_Should_CallRepository_When_NameIsValid()
+        {
+            // Arrange
+            var accountName = "Valid Account Name";
 
-        // Assert
-        _mocker.GetMock<IAccountRepository>().Verify(r => r.InsertAccount(accountName), Times.Once);
-    }
+            // Act
+            _service.CreateAccount(accountName);
 
-    [Fact]
-    public void ReadPhoneNumbersByAccountId_Should_ThrowException_When_AccountIdIsEmpty()
-    {
-        // Arrange
-        var accountId = Guid.Empty;
+            // Assert
+            _mocker.GetMock<IAccountRepository>().Verify(r => r.InsertAccount(accountName), Times.Once);
+        }
 
-        // Act & Assert
-        var exception = Assert.Throws<ArgumentException>(() => _service.GetPhoneNumbersByAccountId(accountId));
-        Assert.Equal("Account ID cannot be empty. (Parameter 'accountId')", exception.Message);
-    }
+        [Fact]
+        public void ReadPhoneNumbersByAccountId_Should_ThrowException_When_AccountIdIsEmpty()
+        {
+            // Arrange
+            var accountId = Guid.Empty;
 
-    [Fact]
-    public void ReadPhoneNumbersByAccountId_Should_CallRepository_When_AccountIdIsValid()
-    {
-        // Arrange
-        var accountId = Guid.NewGuid();
-        var phoneNumbers = new List<Phone> { new Phone { Id = Guid.NewGuid(), Number = "123456789" } };
-        _mocker.GetMock<IAccountRepository>().Setup(r => r.GetPhoneNumbersByAccountId(accountId)).Returns(phoneNumbers);
+            // Act & Assert
+            var exception = Assert.Throws<ArgumentException>(() => _service.GetPhoneNumbersByAccountId(accountId));
+            Assert.Equal("Account ID cannot be empty. (Parameter 'accountId')", exception.Message);
+        }
 
-        // Act
-        var result = _service.GetPhoneNumbersByAccountId(accountId);
+        [Fact]
+        public void ReadPhoneNumbersByAccountId_Should_CallRepository_When_AccountIdIsValid()
+        {
+            // Arrange
+            var accountId = Guid.NewGuid();
+            var phoneNumbers = new List<Phone> { new Phone { Id = Guid.NewGuid(), Number = "123456789" } };
+            _mocker.GetMock<IAccountRepository>().Setup(r => r.GetPhoneNumbersByAccountId(accountId)).Returns(phoneNumbers);
 
-        // Assert
-        Assert.Equal(phoneNumbers, result);
-        _mocker.GetMock<IAccountRepository>().Verify(r => r.GetPhoneNumbersByAccountId(accountId), Times.Once);
-    }
+            // Act
+            var result = _service.GetPhoneNumbersByAccountId(accountId);
 
-    [Fact]
-    public void UpdateAccountStatus_Should_ThrowException_When_AccountIdIsEmpty()
-    {
-        // Arrange
-        var accountId = Guid.Empty;
-        var status = AccountStatus.Active;
+            // Assert
+            Assert.Equal(phoneNumbers, result);
+            _mocker.GetMock<IAccountRepository>().Verify(r => r.GetPhoneNumbersByAccountId(accountId), Times.Once);
+        }
 
-        // Act & Assert
-        var exception = Assert.Throws<ArgumentException>(() => _service.UpdateAccountStatus(accountId, status));
-        Assert.Equal("Account ID cannot be empty. (Parameter 'accountId')", exception.Message);
-    }
+        [Fact]
+        public void UpdateAccountStatus_Should_ThrowException_When_AccountIdIsEmpty()
+        {
+            // Arrange
+            var accountId = Guid.Empty;
+            var status = AccountStatus.Active;
 
-    [Fact]
-    public void UpdateAccountStatus_Should_CallRepository_When_AccountIdIsValid()
-    {
-        // Arrange
-        var accountId = Guid.NewGuid();
-        var status = AccountStatus.Active;
+            // Act & Assert
+            var exception = Assert.Throws<ArgumentException>(() => _service.UpdateAccountStatus(accountId, status));
+            Assert.Equal("Account ID cannot be empty. (Parameter 'accountId')", exception.Message);
+        }
 
-        // Act
-        _service.UpdateAccountStatus(accountId, status);
+        [Fact]
+        public void UpdateAccountStatus_Should_CallRepository_When_AccountIdIsValid()
+        {
+            // Arrange
+            var accountId = Guid.NewGuid();
+            var status = AccountStatus.Active;
 
-        // Assert
-        _mocker.GetMock<IAccountRepository>().Verify(r => r.UpdateAccount(accountId, It.Is<UpdateAccountRequest>(u => u.Status == status)), Times.Once);
-    }
+            // Act
+            _service.UpdateAccountStatus(accountId, status);
 
-    [Fact]
-    public void UpdateAccountNumber_Should_ThrowException_When_AccountIdIsEmpty()
-    {
-        // Arrange
-        var accountId = Guid.Empty;
-        var phoneId = Guid.NewGuid();
+            // Assert
+            _mocker.GetMock<IAccountRepository>().Verify(r => r.UpdateAccount(accountId, It.Is<UpdateAccountRequest>(u => u.Status == status)), Times.Once);
+        }
 
-        // Act & Assert
-        var exception = Assert.Throws<ArgumentException>(() => _service.UpdateAccountNumber(accountId, phoneId));
-        Assert.Equal("Account ID cannot be empty. (Parameter 'accountId')", exception.Message);
-    }
+        [Fact]
+        public void UpdateAccountNumber_Should_ThrowException_When_AccountIdIsEmpty()
+        {
+            // Arrange
+            var accountId = Guid.Empty;
+            var phoneId = Guid.NewGuid();
 
-    [Fact]
-    public void UpdateAccountNumber_Should_CallRepository_When_AccountIdIsValid()
-    {
-        // Arrange
-        var accountId = Guid.NewGuid();
-        var phoneId = Guid.NewGuid();
+            // Act & Assert
+            var exception = Assert.Throws<ArgumentException>(() => _service.UpdateAccountNumber(accountId, phoneId));
+            Assert.Equal("Account ID cannot be empty. (Parameter 'accountId')", exception.Message);
+        }
 
-        // Act
-        _service.UpdateAccountNumber(accountId, phoneId);
+        [Fact]
+        public void UpdateAccountNumber_Should_CallRepository_When_AccountIdIsValid()
+        {
+            // Arrange
+            var accountId = Guid.NewGuid();
+            var phoneId = Guid.NewGuid();
 
-        // Assert
-        _mocker.GetMock<IAccountRepository>().Verify(r => r.UpdateAccount(accountId, It.Is<UpdateAccountRequest>(u => u.PhoneNumberId == phoneId)), Times.Once);
+            // Act
+            _service.UpdateAccountNumber(accountId, phoneId);
+
+            // Assert
+            _mocker.GetMock<IAccountRepository>().Verify(r => r.UpdateAccount(accountId, It.Is<UpdateAccountRequest>(u => u.PhoneNumberId == phoneId)), Times.Once);
+        }
     }
 }
