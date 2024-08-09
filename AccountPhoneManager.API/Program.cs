@@ -1,7 +1,10 @@
 using AccountPhoneManager.Core.Abstraction;
 using AccountPhoneManager.Core.Repositories;
 using AccountPhoneManager.Core.Services;
+using AccountPhoneManager.Core.Validators;
 using AccountPhoneManager.DAL.Contexts;
+using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +24,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddValidatorsFromAssemblyContaining<PhoneNumberValidator>();
 
 var app = builder.Build();
 
