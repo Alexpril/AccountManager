@@ -20,12 +20,17 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountManagmentService, AccountManagmentService>();
 builder.Services.AddScoped<IPhoneRepository, PhoneRepository>();
 builder.Services.AddScoped<IPhoneManagmentService, PhoneManagmentService>();
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Configure System.Text.Json to handle reference loops
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddValidatorsFromAssemblyContaining<PhoneNumberValidator>();
-
+    
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

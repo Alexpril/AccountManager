@@ -10,7 +10,7 @@ namespace AccountPhoneManager.API.Controllers
         private readonly IPhoneManagmentService _phoneManagmentService = phoneManagmentService;
 
         [HttpPost("add")]
-        public IActionResult CreatePhoneNumber([FromBody] string phoneNumber)
+        public IActionResult CreatePhoneNumber([FromQuery] string phoneNumber)
         {
             try
             {
